@@ -1,5 +1,6 @@
 //global 
 var dsnv = new DanhSachNhanVien();
+var validation = new Validation();
 
 // lấy danh sách ngay khi load trang
 getLocalStorage();
@@ -18,16 +19,54 @@ function themNhanVien() {
     var chucVu = getELE("chucvu").value;
     var gioLamTrongThang = getELE("gioLam").value;
 
-    // tạo thể hiện của lớp nhân viên
-    var nv = new NhanVien(taiKhoan,hoTenNV,email,matKhau,ngayLam,luongCoBan,chucVu,gioLamTrongThang);
-    nv.tinhTL();
-    nv.NhanVien();
+    // kiểm tra dữ liệu
+    //& => cộng theo BIT(01010101)
+    //1 & 1
+    var isValid = true;
+    // isValid(moi) = isValid(cũ) & 1(true)
+    // kiểm tra tài khoản
+    isValid &=  validation.checkEmpty(taiKhoan,"tbTKNV","Tài khoản không được để trống") && validation.checkTK(taiKhoan,"tbTKNV","Tài khoản đã bị trùng",dsnv.mangNV);
+
+    // kiểm tra họ tên
+    isValid &=  validation.checkEmpty(hoTenNV,"tbTen","Họ và tên không được để trống") && validation.checkName(hoTenNV,"tbTen","Họ và tên phải là chữ");
+
+    // kiểm tra email
+    isValid &= validation.checkEmail(email,"tbEmail", "Email chưa định dạng");
+
+    // pass
+    isValid &= validation.checkPass(matKhau,"tbMatKhau", "Mật khẩu chưa định dạng");
+    
+
+    // lương
+    isValid &= validation.checkLuong(luongCoBan,"tbLuongCB", "Lương chưa định dạng") && validation.checkLuongCoBan(luongCoBan,"tbLuongCB", "Lương nằm phải trong khoảng : 1 000 000 - 20 000 000");
 
 
-    dsnv.themNV(nv)
-    hienThiTable(dsnv.mangNV)
-    //khi mảng bị thay đổi => lưu xuống localStorage
-    setLocalStorage(dsnv.mangNV)
+    // giờ làm
+    isValid &= validation.checkGioLam(gioLamTrongThang,"tbGiolam", "Giờ làm chưa định dạng") && validation.checkGioLamTrongThang(gioLamTrongThang,"tbGiolam", "Giờ làm phải nằm trong khoảng 80 - 200 giờ");
+
+
+
+
+
+    // kiểm tra công việc hiện tại
+    isValid &= validation.checkSelect("chucvu","tbChucVu", "Bạn chưa chọn chức vụ")
+
+
+    if(isValid) {
+        // toàn bộ dữ liệu hợp lệ
+        // tạo thể hiện của lớp nhân viên
+        var nv = new NhanVien(taiKhoan,hoTenNV,email,matKhau,ngayLam,luongCoBan,chucVu,gioLamTrongThang);
+        nv.tinhTL();
+        nv.NhanVien();
+    
+    
+        dsnv.themNV(nv)
+        hienThiTable(dsnv.mangNV)
+        //khi mảng bị thay đổi => lưu xuống localStorage
+        setLocalStorage(dsnv.mangNV)
+    }
+
+
 
 }
 
