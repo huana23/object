@@ -168,3 +168,7 @@ function timKiem() {
     hienThiTable(mangTK);
 }
 getELE("btnTimNV").onclick = timKiem;
+
+// gõ tìm kiếm liền
+// keypress (đè nút 1ss) , keydown (mới đè xg nút ), keyup(dỡ tay ra khỏi bàn pím)
+getELE("searchName").onkeyup = timKiem;
