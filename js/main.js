@@ -161,3 +161,10 @@ function capNhat(){
     getLocalStorage();
 
 }
+
+function timKiem() {
+    var tk = getELE("searchName").value;
+    var mangTK = dsnv.timKiemTen(tk);
+    hienThiTable(mangTK);
+}
+getELE("btnTimNV").onclick = timKiem;
